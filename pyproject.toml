@@ -1,0 +1,45 @@
+[project]
+name = "grc-gateway"
+dynamic = ["version"]
+description = "GRC Labs Gateway Project"
+maintainers = [
+  {name = "Eva Ron-Bonilla", email = "developer@groncyber.com"},
+]
+readme = "README.md"
+authors = [
+    {name = "Eva Ron-Bonilla",email = "developer@groncyber.com"}
+]
+license = "GPL-3.0-or-later"
+requires-python = ">=3.14"
+dependencies = [
+    "dbus-fast (>=4.0.4,<5.0.0)",
+    "uvicorn (>=0.44.0,<0.45.0)"
+]
+
+[project.scripts]
+grc-gateway = "grc:cli"
+
+[project.urls]
+Homepage = "https://github.com/Macr0Nerd/grc_gateway"
+Documentation = "https://github.com/Macr0Nerd/grc_gateway"
+Repository = "https://github.com/Macr0Nerd/grc_gateway.git"
+Issues = "https://github.com/Macr0Nerd/grc_gateway/issues"
+Changelog = "https://github.com/Macr0Nerd/grc_gateway/blob/master/CHANGELOG.md"
+
+[tool.poetry]
+packages = [{include = "grc", from = "src"}]
+version = "0.0.0"
+
+[tool.poetry.requires-plugins]
+poetry-dynamic-versioning = { version = ">=1.0.0,<2.0.0", extras = ["plugin"] }
+
+[tool.poetry-dynamic-versioning]
+enable = true
+
+[tool.poetry-dynamic-versioning.from-file]
+source = "src/grc/dunders.py"
+pattern = '__version__ = "(?P<base>\d+\.\d+\.\d+)\.?(?:(?P<stage>dev|rc)(?P<revision>\d+))?(?:-(?P<tagged_metadata>\w+))?"'
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
