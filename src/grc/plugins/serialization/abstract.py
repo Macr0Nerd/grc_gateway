@@ -2,10 +2,10 @@
 
 import logging
 from abc import abstractmethod
-from collections.abc import Iterable, Mapping
-from types import NoneType
 from typing import (
+    Mapping,
     Protocol,
+    Sequence,
     SupportsFloat,
     SupportsInt,
     Union,
@@ -36,20 +36,30 @@ class SupportsStr(Protocol):
         return ''
 
 
-Serializable = Union[
-    bool,
-    Iterable['Serializable'],
-    Mapping[SupportsStr, 'Serializable'],
-    NoneType,
+SerializablePrimitives = Union[
+    bool, None, SupportsFloat, SupportsInt, SupportsStr
+]
+SerializableObjects = Union[
+    Sequence[SerializablePrimitives],
+    Mapping[SupportsStr, SerializablePrimitives],
     ObjectSerializable,
-    SupportsFloat,
-    SupportsInt,
-    SupportsStr,
+]
+Serializable = Union[
+    SerializablePrimitives,
+    SerializableObjects,
+    Sequence[SerializableObjects],
+    Mapping[SupportsStr, SerializableObjects],
 ]
 """Defines what types are serializable."""
 
-
+IsSerializedPrimitives = Union[bool, float, int, str, None]
+IsSerializedObjects = Union[
+    dict[str, IsSerializedPrimitives], list[IsSerializedPrimitives]
+]
 IsSerialized = Union[
-    bool, dict[str, 'IsSerialized'], float, int, list, NoneType, str
+    IsSerializedPrimitives,
+    IsSerializedObjects,
+    dict[str, IsSerializedObjects],
+    list[IsSerializedObjects],
 ]
 """If an object is already a serialized type."""
