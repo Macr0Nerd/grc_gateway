@@ -87,11 +87,10 @@ def cli() -> int:
     )
     for plugin_path, plugin_module in commands_plugins.copy().items():
         plugin_info: PluginInfo = plugin_module.plugin_info
-        plugin_metadata: dict | PluginMetadata = plugin_info.plugin_metadata[
-            'cli'
-        ]
 
-        if isinstance(plugin_metadata, dict):
+        if isinstance(
+            plugin_metadata := plugin_info.plugin_metadata['cli'], dict
+        ):
             plugin_metadata = PluginMetadata(**plugin_metadata)
 
         plugin_parser_kwargs = {
