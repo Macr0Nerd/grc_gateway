@@ -26,11 +26,6 @@ class ObjectSerializable(Protocol):
         """Serialize a network object to a dictionary."""
         raise NotImplementedError()
 
-    @abstractmethod
-    def __deserialize__(self, obj: dict[str, IsSerialized]) -> None:
-        """Deserialize a network object to a dictionary."""
-        raise NotImplementedError()
-
 
 @runtime_checkable
 class SupportsStr(Protocol):
