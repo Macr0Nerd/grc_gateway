@@ -1,8 +1,4 @@
-"""Webserver plugin.
-
-Attributes:
-    app (grc.plugins.webserver.abstract.App): ASGI webserver application
-"""
+"""Webserver plugin."""
 
 __all__ = ['app']
 
@@ -12,6 +8,7 @@ from grc.plugins.plugins import PluginInfo
 from grc.plugins.webserver.abstract import App
 
 app = App
+"""grc.plugins.webserver.abstract.App: ASGI webserver application"""
 
 plugin_info = PluginInfo(
     plugin_name='webserver',
