@@ -1,8 +1,4 @@
-"""Logging utilities.
-
-Attributes:
-    LOG_CONFIG (Optional[dict]): logging configuration
-"""
+"""Logging utilities."""
 
 import logging
 import logging.config
@@ -10,6 +6,7 @@ import logging.config
 from grc.plugins.logging.filters import filters
 
 LOG_CONFIG: dict | None = None
+"""Optional[dict]: logging configuration"""
 
 
 def configure_logging(

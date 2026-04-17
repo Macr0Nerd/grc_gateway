@@ -1,8 +1,4 @@
-"""Logging filters module.
-
-Attributes:
-    filters (dict[str, dict[int, Callable]]): Logging filters by type and level
-"""
+"""Logging filters module."""
 
 import logging
 from typing import Callable
@@ -38,3 +34,4 @@ filters = {
         logging.CRITICAL: level_and_below_filter(logging.CRITICAL),
     }
 }
+"""dict[str, dict[int, Callable]]: Logging filters by type and level"""
