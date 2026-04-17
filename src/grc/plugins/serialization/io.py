@@ -2,7 +2,14 @@
 
 import asyncio
 import logging
-from typing import Awaitable, Mapping, Sequence, SupportsFloat, SupportsInt
+from typing import (
+    Awaitable,
+    Mapping,
+    Sequence,
+    SupportsFloat,
+    SupportsInt,
+    overload,
+)
 
 from grc.plugins.logging import TemplateStringAdapter
 from grc.plugins.serialization.abstract import (
@@ -13,6 +20,48 @@ from grc.plugins.serialization.abstract import (
 )
 
 logger = TemplateStringAdapter(logging.getLogger(__name__))
+
+
+@overload
+async def serialize(obj: bool) -> bool:
+    pass
+
+
+@overload
+async def serialize(obj: float | SupportsFloat) -> float:
+    pass
+
+
+@overload
+async def serialize(obj: int | SupportsInt) -> int:
+    pass
+
+
+@overload
+async def serialize(obj: str | SupportsStr) -> str:
+    pass
+
+
+@overload
+async def serialize(obj: None) -> None:
+    pass
+
+
+@overload
+async def serialize(obj: Sequence[Serializable]) -> list[IsSerialized]:
+    pass
+
+
+@overload
+async def serialize(
+    obj: Mapping[str | SupportsStr, Serializable],
+) -> dict[str, IsSerialized]:
+    pass
+
+
+@overload
+async def serialize(obj: ObjectSerializable) -> dict[str, IsSerialized]:
+    pass
 
 
 async def serialize(obj: Serializable) -> IsSerialized:
