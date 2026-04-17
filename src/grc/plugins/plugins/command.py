@@ -4,7 +4,7 @@ import argparse
 import logging
 
 from grc.plugins.logging import TemplateStringAdapter
-from grc.plugins.plugins import PluginInfo
+from grc.plugins.plugins.abstract import PluginInfo
 from grc.plugins.plugins.loader import discover_plugins
 
 logger = TemplateStringAdapter(logging.getLogger(__name__))
