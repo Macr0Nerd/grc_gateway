@@ -1,26 +1,24 @@
-##############################################################################
-##  Copyright (C) 2026  Eva Ron-Bonilla                                     ##
-##                                                                          ##
-##  This program is free software: you can redistribute it and/or modify    ##
-##  it under the terms of the GNU General Public License as published by    ##
-##  the Free Software Foundation, either version 3 of the License, or       ##
-##  (at your option) any later version.                                     ##
-##                                                                          ##
-##  This program is distributed in the hope that it will be useful,         ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of          ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           ##
-##  GNU General Public License for more details.                            ##
-##                                                                          ##
-##  You should have received a copy of the GNU General Public License       ##
-##  along with this program.  If not, see <https://www.gnu.org/licenses/>.  ##
-##############################################################################
+"""Logging filters module.
 
+Attributes:
+    filters (dict[str, dict[int, Callable]]): Logging filters by type and level
+"""
 
 import logging
 from typing import Callable
 
 
-def level_and_below_filter(level: int | str) -> Callable[[logging.LogRecord], bool]:
+def level_and_below_filter(
+    level: int | str,
+) -> Callable[[logging.LogRecord], bool]:
+    """Logging filter for levels at or below a certain level.
+
+    Args:
+        level (Union[int, str]): Logging level
+
+    Returns:
+        Callable[[logging.LogRecord], bool]: A callable to determine if the log record is at or below the set level
+    """
     if isinstance(level, str):
         level = getattr(logging, level.upper())
 

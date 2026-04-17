@@ -1,27 +1,34 @@
-##############################################################################
-##  Copyright (C) 2026  Eva Ron-Bonilla                                     ##
-##                                                                          ##
-##  This program is free software: you can redistribute it and/or modify    ##
-##  it under the terms of the GNU General Public License as published by    ##
-##  the Free Software Foundation, either version 3 of the License, or       ##
-##  (at your option) any later version.                                     ##
-##                                                                          ##
-##  This program is distributed in the hope that it will be useful,         ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of          ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           ##
-##  GNU General Public License for more details.                            ##
-##                                                                          ##
-##  You should have received a copy of the GNU General Public License       ##
-##  along with this program.  If not, see <https://www.gnu.org/licenses/>.  ##
-##############################################################################
+"""Plugin abstracts.
 
+Attributes:
+    ModuleMap (type[dict[str, ModuleType]]): A mapping of a string to a module
+"""
 
 import dataclasses
-from typing import Optional
+from types import ModuleType
+from typing import Any
+
+ModuleMap = dict[str, ModuleType]
 
 
 @dataclasses.dataclass
 class PluginInfo:
+    """Plugin information.
+
+    Notes:
+        The metadata can be set to anything, but the convention that this
+        project follows is that it is a mapping of a plugin name to the metadata
+        settings for that plugin. Do not invade the namespaces of other plugins
+        -- that's not nice.
+
+    Attributes:
+        plugin_name (str): The plugin name.
+        plugin_description (Optional[str]): The plugin description.
+        plugin_version (Optional[str]): The plugin version.
+        plugin_metadata (Optional[dict[str, any]]): The plugin metadata.
+    """
+
     plugin_name: str
-    plugin_description: Optional[str] = None
-    plugin_version: Optional[str] = None
+    plugin_description: str | None = None
+    plugin_version: str | None = None
+    plugin_metadata: dict[str, Any] | None = None

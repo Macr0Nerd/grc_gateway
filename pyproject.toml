@@ -3,17 +3,19 @@ name = "grc-gateway"
 dynamic = ["version"]
 description = "GRC Labs Gateway Project"
 maintainers = [
-  {name = "Eva Ron-Bonilla", email = "developer@groncyber.com"},
+    { name = "Eva Ron-Bonilla", email = "developer@groncyber.com" },
 ]
 readme = "README.md"
 authors = [
-    {name = "Eva Ron-Bonilla",email = "developer@groncyber.com"}
+    { name = "Eva Ron-Bonilla", email = "developer@groncyber.com" }
 ]
 license = "GPL-3.0-or-later"
-requires-python = ">=3.14"
+requires-python = ">=3.14,<3.15"
 dependencies = [
     "dbus-fast (>=4.0.4,<5.0.0)",
-    "uvicorn (>=0.44.0,<0.45.0)"
+    "uvicorn (>=0.44.0,<0.45.0)",
+    "netutils (>=1.17.2,<2.0.0)",
+    "pre-commit (>=4.5.1,<5.0.0)",
 ]
 
 [project.scripts]
@@ -27,7 +29,7 @@ Issues = "https://github.com/Macr0Nerd/grc_gateway/issues"
 Changelog = "https://github.com/Macr0Nerd/grc_gateway/blob/master/CHANGELOG.md"
 
 [tool.poetry]
-packages = [{include = "grc", from = "src"}]
+packages = [{ include = "grc", from = "src" }]
 version = "0.0.0"
 
 [tool.poetry.requires-plugins]
@@ -38,8 +40,56 @@ enable = true
 
 [tool.poetry-dynamic-versioning.from-file]
 source = "src/grc/dunders.py"
-pattern = '__version__ = "(?P<base>\d+\.\d+\.\d+)\.?(?:(?P<stage>dev|rc)(?P<revision>\d+))?(?:-(?P<tagged_metadata>\w+))?"'
+pattern = '''__version__ = '(?P<base>\d+\.\d+\.\d+)\.?(?:(?P<stage>dev|rc)(?P<revision>\d+))?(?:-(?P<tagged_metadata>\w+))?'''
+
+[tool.ruff]
+fix = true
+line-length = 80
+namespace-packages = ["grc/plugins"]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+indent-style = "space"
+quote-style = "single"
+preview = true
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+explicit-preview-rules = true
+preview = true
+select = [
+    "A",
+    "ANN",
+    "ASYNC",
+    "C4",
+    "D",
+    "DTZ",
+    "DTZ",
+    "E4",
+    "E7",
+    "E9",
+    "F",
+    "FIX",
+    "ICN",
+    "ISC",
+    "LOG",
+    "S",
+    "T100"
+]
+
+[tool.ruff.lint.flake8-annotations]
+suppress-dummy-args = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+ignore-var-parameters = true
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
 build-backend = "poetry_dynamic_versioning.backend"
+
+[dependency-groups]
+dev = [
+    "ruff (>=0.15.11,<0.16.0)"
+]

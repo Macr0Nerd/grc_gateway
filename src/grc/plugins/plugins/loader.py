@@ -1,49 +1,83 @@
-##############################################################################
-##  Copyright (C) 2026  Eva Ron-Bonilla                                     ##
-##                                                                          ##
-##  This program is free software: you can redistribute it and/or modify    ##
-##  it under the terms of the GNU General Public License as published by    ##
-##  the Free Software Foundation, either version 3 of the License, or       ##
-##  (at your option) any later version.                                     ##
-##                                                                          ##
-##  This program is distributed in the hope that it will be useful,         ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of          ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           ##
-##  GNU General Public License for more details.                            ##
-##                                                                          ##
-##  You should have received a copy of the GNU General Public License       ##
-##  along with this program.  If not, see <https://www.gnu.org/licenses/>.  ##
-##############################################################################
-
+"""Plugins loaders."""
 
 import importlib
 import logging
 import pkgutil
 from types import ModuleType
+from typing import Any, Iterator
 
 import grc.plugins
 from grc.plugins.logging import TemplateStringAdapter
-
+from grc.plugins.plugins.abstract import ModuleMap
+from grc.plugins.plugins.filters import MetadataFilter
 
 logger = TemplateStringAdapter(logging.getLogger(__name__))
 
 
-def discover_plugins() -> dict[str, ModuleType]:
-    iter_namespace = lambda ns_pkg: pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + ".")
+def discover_plugins() -> ModuleMap:
+    """Discover all plugins and return a dictionary mapping plugin names to modules.
+
+    Returns:
+        ModuleMap: a dictionary mapping plugin names to modules
+    """
+
+    def iter_namespace(ns_pkg: ModuleType) -> Iterator[pkgutil.ModuleInfo]:
+        """Iterate a namespace package and an iterator of submodule information.
+
+        Args:
+            ns_pkg (ModuleType): a namespace package
+
+        Returns:
+            Iterator[pkgutil.ModuleInfo]: an iterator of submodule information
+        """
+        return pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + '.')
 
     discovered_plugins = {
         name: importlib.import_module(name)
-        for finder, name, ispkg
-        in iter_namespace(grc.plugins)
+        for finder, name, ispkg in iter_namespace(grc.plugins)
     }
 
     valid_plugins = {}
 
     for plugin_name, plugin_module in discovered_plugins.items():
         if not hasattr(plugin_module, 'plugin_info'):
-            logger.warning(t'Plugin {plugin_name} has no plugin_info attribute, skipping')
+            logger.warning(
+                t'Plugin {plugin_name} has no plugin_info attribute, skipping'
+            )
             continue
 
         valid_plugins[plugin_name] = plugin_module
 
     return valid_plugins
+
+
+def filter_plugins_metadata(
+    filters: dict[str, Any | None], plugins: ModuleMap | None = None
+) -> ModuleMap:
+    """Filter plugins metadata based on filters.
+
+    Notes:
+        * If plugins are not provided this calls discover_plugins().
+
+    Args:
+        filters (dict[str, Optional[Any]]): metadata filters
+        plugins (Optional[ModuleMap]): the plugins list
+
+    Returns:
+        Optional[ModuleMap]: plugins matching the filters
+
+    References:
+        * grc.plugins.plugins.filters.MetadataFilter
+    """
+    if not plugins:
+        plugins = discover_plugins()
+
+    filtered_plugins: ModuleMap = {}
+
+    metadata_filter = MetadataFilter(filters)
+
+    for plugin_name, plugin_module in plugins.items():
+        if metadata_filter(plugin_module.plugin_info):
+            filtered_plugins[plugin_name] = plugin_module
+
+    return filtered_plugins

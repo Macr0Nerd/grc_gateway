@@ -1,26 +1,13 @@
-##############################################################################
-##  Copyright (C) 2026  Eva Ron-Bonilla                                     ##
-##                                                                          ##
-##  This program is free software: you can redistribute it and/or modify    ##
-##  it under the terms of the GNU General Public License as published by    ##
-##  the Free Software Foundation, either version 3 of the License, or       ##
-##  (at your option) any later version.                                     ##
-##                                                                          ##
-##  This program is distributed in the hope that it will be useful,         ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of          ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           ##
-##  GNU General Public License for more details.                            ##
-##                                                                          ##
-##  You should have received a copy of the GNU General Public License       ##
-##  along with this program.  If not, see <https://www.gnu.org/licenses/>.  ##
-##############################################################################
+"""Logging utilities.
 
+Attributes:
+    LOG_CONFIG (Optional[dict]): logging configuration
+"""
 
 import logging
 import logging.config
 
 from grc.plugins.logging.filters import filters
-
 
 LOG_CONFIG: dict | None = None
 
@@ -32,8 +19,17 @@ def configure_logging(
     quiet: int | None = None,
     verbose: int | None = None,
     suppress_stdout: bool | None = None,
-    **_
+    **_,
 ) -> None:
+    """Configures the logging module.
+
+    Args:
+        output_log_file (str): The path to the log file
+        output_log_level (str): The log level
+        quiet (int): The quiet level
+        verbose (int): The verbose level
+        suppress_stdout (bool): Suppress stdout
+    """
     if output_log_level is None:
         output_log_level = logging.INFO
     elif isinstance(output_log_level, str):
@@ -58,13 +54,13 @@ def configure_logging(
                 'format': '({asctime}) {name} [{levelname}]: {message}',
                 'datefmt': '%H:%M:%S',
                 'style': '{',
-                'validate': True
+                'validate': True,
             },
             'file': {
                 'format': '{asctime} {name} {levelname}: {message}',
                 'datefmt': '%Y-%m-%d %H:%M:%S',
                 'style': '{',
-                'validate': True
+                'validate': True,
             },
         },
         'handlers': {
@@ -82,10 +78,7 @@ def configure_logging(
                 'stream': 'ext://sys.stderr',
             },
         },
-        'root': {
-            'level': logging.DEBUG,
-            'handlers': ['stdout', 'stderr'],
-        }
+        'root': {'level': logging.DEBUG, 'handlers': ['stdout', 'stderr']},
     }
 
     if suppress_stdout:
