@@ -77,7 +77,7 @@ class MetadataFilter(PluginFilter):
             bool: True if the key matches the expected value, False otherwise
 
         Todo:
-            * Add checking against a list of options
+            * [ ] Add checking against a list of options
         """
         if key in actual:
             if expected is None:

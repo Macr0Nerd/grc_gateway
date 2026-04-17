@@ -1,14 +1,11 @@
-"""Plugin abstracts.
-
-Attributes:
-    ModuleMap (type[dict[str, ModuleType]]): A mapping of a string to a module
-"""
+"""Plugin abstracts."""
 
 import dataclasses
 from types import ModuleType
 from typing import Any
 
 ModuleMap = dict[str, ModuleType]
+"""type[dict[str, ModuleType]]: A mapping of a string to a module"""
 
 
 @dataclasses.dataclass
