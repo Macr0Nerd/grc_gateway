@@ -1,11 +1,9 @@
 """Serialization."""
 
 import logging
-from abc import abstractmethod
+from collections.abc import Iterable, Mapping
 from typing import (
-    Mapping,
     Protocol,
-    Sequence,
     SupportsFloat,
     SupportsInt,
     Union,
@@ -21,10 +19,7 @@ logger = TemplateStringAdapter(logging.getLogger(__name__))
 class ObjectSerializable(Protocol):
     """Object Serialization protocol."""
 
-    @abstractmethod
-    def __serialize__(self) -> dict:
-        """Serialize a network object to a dictionary."""
-        raise NotImplementedError()
+    __serializable_attributes__: Iterable[str]
 
 
 @runtime_checkable
@@ -36,30 +31,30 @@ class SupportsStr(Protocol):
         return ''
 
 
-SerializablePrimitives = Union[
+_SerializablePrimitives = Union[
     bool, None, SupportsFloat, SupportsInt, SupportsStr
 ]
-SerializableObjects = Union[
-    Sequence[SerializablePrimitives],
-    Mapping[SupportsStr, SerializablePrimitives],
+_SerializableObjects = Union[
+    Iterable[_SerializablePrimitives],
+    Mapping[SupportsStr, _SerializablePrimitives],
     ObjectSerializable,
 ]
 Serializable = Union[
-    SerializablePrimitives,
-    SerializableObjects,
-    Sequence[SerializableObjects],
-    Mapping[SupportsStr, SerializableObjects],
+    _SerializablePrimitives,
+    _SerializableObjects,
+    Iterable[_SerializableObjects],
+    Mapping[SupportsStr, _SerializableObjects],
 ]
 """Defines what types are serializable."""
 
-IsSerializedPrimitives = Union[bool, float, int, str, None]
-IsSerializedObjects = Union[
-    dict[str, IsSerializedPrimitives], list[IsSerializedPrimitives]
+_IsSerializedPrimitives = Union[bool, float, int, str, None]
+_IsSerializedObjects = Union[
+    dict[str, _IsSerializedPrimitives], list[_IsSerializedPrimitives]
 ]
 IsSerialized = Union[
-    IsSerializedPrimitives,
-    IsSerializedObjects,
-    dict[str, IsSerializedObjects],
-    list[IsSerializedObjects],
+    _IsSerializedPrimitives,
+    _IsSerializedObjects,
+    dict[str, _IsSerializedObjects],
+    list[_IsSerializedObjects],
 ]
 """If an object is already a serialized type."""

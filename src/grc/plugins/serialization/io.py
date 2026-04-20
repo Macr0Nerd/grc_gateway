@@ -2,14 +2,8 @@
 
 import asyncio
 import logging
-from typing import (
-    Awaitable,
-    Mapping,
-    Sequence,
-    SupportsFloat,
-    SupportsInt,
-    overload,
-)
+from collections.abc import Iterable, Mapping
+from typing import SupportsFloat, SupportsInt
 
 from grc.plugins.logging import TemplateStringAdapter
 from grc.plugins.serialization.abstract import (
@@ -20,48 +14,6 @@ from grc.plugins.serialization.abstract import (
 )
 
 logger = TemplateStringAdapter(logging.getLogger(__name__))
-
-
-@overload
-async def serialize(obj: bool) -> bool:
-    pass
-
-
-@overload
-async def serialize(obj: float | SupportsFloat) -> float:
-    pass
-
-
-@overload
-async def serialize(obj: int | SupportsInt) -> int:
-    pass
-
-
-@overload
-async def serialize(obj: str | SupportsStr) -> str:
-    pass
-
-
-@overload
-async def serialize(obj: None) -> None:
-    pass
-
-
-@overload
-async def serialize(obj: Sequence[Serializable]) -> list[IsSerialized]:
-    pass
-
-
-@overload
-async def serialize(
-    obj: Mapping[str | SupportsStr, Serializable],
-) -> dict[str, IsSerialized]:
-    pass
-
-
-@overload
-async def serialize(obj: ObjectSerializable) -> dict[str, IsSerialized]:
-    pass
 
 
 async def serialize(obj: Serializable) -> IsSerialized:
@@ -84,8 +36,13 @@ async def serialize(obj: Serializable) -> IsSerialized:
         or obj is None
     ):
         return obj
-    elif isinstance(obj, Sequence):
-        return await asyncio.gather(*[serialize(x) for x in obj])
+    elif isinstance(obj, ObjectSerializable):
+        out = {}
+
+        for attribute in obj.__serializable_attributes__:
+            out[attribute] = getattr(obj, attribute)
+
+        return await serialize(out)
     elif isinstance(obj, Mapping):
         out = {}
 
@@ -97,13 +54,8 @@ async def serialize(obj: Serializable) -> IsSerialized:
                 tg.create_task(add_map_pair(k, v))
 
         return out
-    elif isinstance(obj, ObjectSerializable):
-        out = obj.__serialize__()
-
-        if isinstance(out, Awaitable):
-            return await out
-
-        return out
+    elif isinstance(obj, Iterable):
+        return await asyncio.gather(*[serialize(x) for x in obj])
     elif isinstance(obj, SupportsStr):
         return str(obj)
     elif isinstance(obj, SupportsFloat):
